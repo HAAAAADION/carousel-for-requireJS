@@ -6,11 +6,12 @@ requirejs.config({
 });
 
 require(['alpha', 'jquery'], function(c, $){
-	var a = document.getElementsByTagName('div123');
+	var a = document.getElementsByTagName('a');
 	var b = document.getElementById('carousel');
 
-	var carousel = new c.carousel(a);
+	//var carousel = new c.carousel(b);
 
-	//$('#carousel').demo();
+	//$('#carousel a').demo().append();
+	$('#carousel').append('<div>asdasd12312</div>');
 	//carousel.see();
 });
