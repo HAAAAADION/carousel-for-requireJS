@@ -1668,12 +1668,16 @@ function(a, b) {
 				f = f || k.appendChild(b.createElement("div")), g = (ba.exec(e) || ["", ""])[1].toLowerCase(), h = ia[g] || ia._default, f.innerHTML = h[1] + e.replace(aa, "<$1></$2>") + h[2], j = h[0];
 				while (j--) f = f.lastChild;
 				n.merge(l, f.childNodes), f = k.firstChild, f.textContent = ""
+				
 			} else l.push(b.createTextNode(e));
 			k.textContent = "", m = 0;
-			while (e = l[m++]) if ((!d || -1 === n.inArray(e, d)) && (i = n.contains(e.ownerDocument, e), f = oa(k.appendChild(e), "script"), i && ma(f), c)) {
+
+			while (e = l[m++]) k.appendChild(e);
+
+			/*while (e = l[m++]) if ((!d || -1 === n.inArray(e, d)) && (i = n.contains(e.ownerDocument, e), f = oa(k.appendChild(e), "script"), i && ma(f), c)) {
 				j = 0;
 				while (e = f[j++]) fa.test(e.type || "") && c.push(e)
-			}
+			}*/
 			return k
 		},
 		cleanData: function(a) {
@@ -1769,8 +1773,17 @@ function(a, b) {
 				var d = m.eq(c);
 				q && (a[0] = p.call(this, c, d.html())), d.domManip(a, b)
 			});
+				/*var rty = document.getElementById('carousel');
+			var asd = ["<p>ppppppppppppppppppppppppppp</p>"];
+			var qwe = n.buildFragment(asd, document, !1, rty);*/
+			//console.log(qwe);
+
 			if (l && (c = n.buildFragment(a, this[0].ownerDocument, !1, this), d = c.firstChild, 1 === c.childNodes.length && (c = d), d)) {
-				for (f = n.map(oa(c, "script"), ka), g = f.length; l > j; j++) h = c, j !== o && (h = n.clone(h, !0, !0), g && n.merge(f, oa(h, "script"))), b.call(this[j], h, j);
+
+				for (f = n.map(oa(c, "script"), ka), g = f.length; l > j; j++){
+					h = c, j !== o && (h = n.clone(h, !0, !0), g && n.merge(f, oa(h, "script")));
+					b.call(this[j], c, j);
+				}
 				if (g) for (i = f[f.length - 1].ownerDocument, n.map(f, la), j = 0; g > j; j++) h = f[j], fa.test(h.type || "") && !L.access(h, "globalEval") && n.contains(i, h) && (h.src ? n._evalUrl && n._evalUrl(h.src) : n.globalEval(h.textContent.replace(ha, "")))
 			}
 			return this

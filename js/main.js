@@ -11,7 +11,7 @@ require(['alpha', 'jquery'], function(c, $){
 
 	//var carousel = new c.carousel(b);
 
-	//$('#carousel a').demo().append();
-	$('#carousel').append('<div>asdasd12312</div>');
+	$('#carousel a').demo().append();
+	//$('#carousel').append('<div>asdasd12312</div><div>12312</div>');
 	//carousel.see();
 });

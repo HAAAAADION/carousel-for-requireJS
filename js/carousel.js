@@ -24,7 +24,7 @@
 		this.timeout();
 		this.drag();
 		
-		console.log(this);
+		//console.log(this);
 	}
 
 	carousel.prototype = {
@@ -84,37 +84,20 @@
 			//this.pars.append('<div class="mask">'+content+'</div>');
 		},
 
-		ja: function(a, b) {
-			return n.nodeName(a, "table") && n.nodeName(11 !== b.nodeType ? b : b.firstChild, "tr") ? a.getElementsByTagName("tbody")[0] || a.appendChild(a.ownerDocument.createElement("tbody")) : a
-		},
-
 		append: function() {
-			return this.domManip(arguments, function(a) {
-				if (1 === this.nodeType || 11 === this.nodeType || 9 === this.nodeType) {
-					console.log('asda');
-					var b = this.ja(this, a);
-					b.appendChild(a)
-				}
-			})
-		},
+			var b = document;
+			var k = b.createDocumentFragment();
+			var f = k.appendChild(b.createElement("div"));
+			f.innerHTML = '<p class="asd">pppppppppppppppppppp11111111111111111</p><p>ppppppppppppppppp222222222222222222</p>';
+			var g = f.childNodes;
 
-		domManip: function(a, b) {
-			a = e.apply([], a);
-			var c, d, f, g, h, i, j = 0,
-				l = this.length,
-				m = this,
-				o = l - 1,
-				p = a[0],
-				q = n.isFunction(p);
-			if (q || l > 1 && "string" == typeof p && !k.checkClone && ea.test(p)) return this.each(function(c) {
-				var d = m.eq(c);
-				q && (a[0] = p.call(this, c, d.html())), d.domManip(a, b)
-			});
-			if (l && (c = n.buildFragment(a, this[0].ownerDocument, !1, this), d = c.firstChild, 1 === c.childNodes.length && (c = d), d)) {
-				for (f = n.map(oa(c, "script"), ka), g = f.length; l > j; j++) h = c, j !== o && (h = n.clone(h, !0, !0), g && n.merge(f, oa(h, "script"))), b.call(this[j], h, j);
-				if (g) for (i = f[f.length - 1].ownerDocument, n.map(f, la), j = 0; g > j; j++) h = f[j], fa.test(h.type || "") && !L.access(h, "globalEval") && n.contains(i, h) && (h.src ? n._evalUrl && n._evalUrl(h.src) : n.globalEval(h.textContent.replace(ha, "")))
+			var m = 0;
+			var sel = document.getElementById('carousel');
+			while (e = g[m++]){
+				k.appendChild(e);
 			}
-			return this
+			sel.appendChild(k);
+			console.log(k);
 		},
 
 		maskChange: function(){
