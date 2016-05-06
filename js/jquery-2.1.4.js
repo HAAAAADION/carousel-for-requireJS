@@ -1672,12 +1672,10 @@ function(a, b) {
 			} else l.push(b.createTextNode(e));
 			k.textContent = "", m = 0;
 
-			while (e = l[m++]) k.appendChild(e);
-
-			/*while (e = l[m++]) if ((!d || -1 === n.inArray(e, d)) && (i = n.contains(e.ownerDocument, e), f = oa(k.appendChild(e), "script"), i && ma(f), c)) {
+			while (e = l[m++]) if ((!d || -1 === n.inArray(e, d)) && (i = n.contains(e.ownerDocument, e), f = oa(k.appendChild(e), "script"), i && ma(f), c)) {
 				j = 0;
 				while (e = f[j++]) fa.test(e.type || "") && c.push(e)
-			}*/
+			}
 			return k
 		},
 		cleanData: function(a) {
@@ -1701,6 +1699,7 @@ function(a, b) {
 			return this.domManip(arguments, function(a) {
 				if (1 === this.nodeType || 11 === this.nodeType || 9 === this.nodeType) {
 					var b = ja(this, a);
+					console.log(b);
 					b.appendChild(a)
 				}
 			})
@@ -1773,10 +1772,6 @@ function(a, b) {
 				var d = m.eq(c);
 				q && (a[0] = p.call(this, c, d.html())), d.domManip(a, b)
 			});
-				/*var rty = document.getElementById('carousel');
-			var asd = ["<p>ppppppppppppppppppppppppppp</p>"];
-			var qwe = n.buildFragment(asd, document, !1, rty);*/
-			//console.log(qwe);
 
 			if (l && (c = n.buildFragment(a, this[0].ownerDocument, !1, this), d = c.firstChild, 1 === c.childNodes.length && (c = d), d)) {
 

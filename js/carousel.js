@@ -16,15 +16,13 @@
 		this.option = this.init(this.$this, _aoConfig);
 		this.curPos = this.curDis = 0;
 		this.par 	= !element.length ? element.parentNode : element[0].parentNode;
-		this.pars 	= !element.length ? this.par.parentNode : this.par[0];
+		this.pars 	= this.par.parentNode;
 
 		this.sizeReset();
 
 		if (this.option.mask) this.mask();
 		this.timeout();
 		this.drag();
-		
-		//console.log(this);
 	}
 
 	carousel.prototype = {
@@ -78,32 +76,51 @@
 
 		mask: function(){
 			var content = '';
-			this.$this.each(function(k, v){
+			/*this.$this.each(function(k, v){
 				content += k == 0 ? '<span class="on"></span>' : '<span></span>';
-			});
+			});*/
+
+			for (var i = 0; i < this.$this.length; i++) if (typeof this.$this[i] === 'object') content += i == 0 ? '<span class="on"></span>' : '<span></span>';
+
+			this.append('<div class="mask">'+content+'</div>');
 			//this.pars.append('<div class="mask">'+content+'</div>');
 		},
 
-		append: function() {
+		append: function(content){
 			var b = document;
 			var k = b.createDocumentFragment();
-			var f = k.appendChild(b.createElement("div"));
-			f.innerHTML = '<p class="asd">pppppppppppppppppppp11111111111111111</p><p>ppppppppppppppppp222222222222222222</p>';
+			var c = b.createElement("div");
+			var f = k.appendChild(c);
+			f.innerHTML = content;
 			var g = f.childNodes;
 
+			var sel = this.pars;
+
 			var m = 0;
-			var sel = document.getElementById('carousel');
-			while (e = g[m++]){
-				k.appendChild(e);
-			}
+			var l = [];
+
+			this.merge(l, g);
+
+			while (e = l[m++]) k.appendChild(e);
+
+			k.removeChild(c);
 			sel.appendChild(k);
-			console.log(k);
+		},
+
+		merge: function(a, b) {
+			var m = 0;
+			while(e = b[m]) a[m] = e, m++;
+
+			/*for (var c = +b.length, d = 0, e = a.length; c > d; d++){
+				a[e++] = b[d];
+			}*/
+			return a
 		},
 
 		maskChange: function(){
-			var mask = this.pars.find('.mask span');
+			/*var mask = this.pars.find('.mask span');
 			mask.removeClass('on');
-			mask.eq(this.curPos).addClass('on');
+			mask.eq(this.curPos).addClass('on');*/
 		},
 
 		fastDrag: function(){
@@ -122,7 +139,8 @@
 		timeout: function(){
 			if (!this.option.auto) return false;
 			var $this = this;
-			this.t = setTimeout(function(){$this.timoutGO()}, 5000);
+			//this.t = setTimeout(function(){$this.timoutGO()}, 100);
+			$this.timoutGO();
 		},
 
 		timoutGO: function(reset){
@@ -143,7 +161,7 @@
 		},
 
 		drag: function(){
-			if (!this.option.drag) return false;
+			/*if (!this.option.drag) return false;
 
 			var $this 		= this,
 				option 		= this.option,
@@ -205,7 +223,7 @@
 					$this.timeout();
 					$(document).unbind();
 				});
-			});
+			});*/
 		},
 
 		dragReset: function(){
@@ -213,9 +231,14 @@
 			this.dragnum 	= 0;
 		},
 
-		
+		css: function(attr, value){
+			var asd = this.par.currentStyle.getAttribute('margin-left');
+			//var asd = element.currentStyle ? this.par.ownerDocument.defaultView.getComputedStyle(this.par).getPropertyValue('margin-left');
+			alert(asd);
+		},
 
 		anima: function(position){
+			this.css();
 			var movePos = parseFloat(this.par.css('transform').slice(7).split(', ')[4]);
 
 			var b = movePos, c = position - movePos, d = this.option.speed, t = 0;
