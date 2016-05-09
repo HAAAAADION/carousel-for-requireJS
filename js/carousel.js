@@ -80,7 +80,7 @@
 				content += k == 0 ? '<span class="on"></span>' : '<span></span>';
 			});*/
 
-			for (var i = 0; i < this.$this.length; i++) if (typeof this.$this[i] === 'object') content += i == 0 ? '<span class="on"></span>' : '<span></span>';
+			for (var i = 0; i < this.$this.length; i++) if (typeof this.$this[i] === 'object') content += i == 0 ? '<span class="on asd"></span>' : '<span class="on"></span>';
 
 			this.append('<div class="mask">'+content+'</div>');
 			//this.pars.append('<div class="mask">'+content+'</div>');
@@ -118,9 +118,10 @@
 		},
 
 		maskChange: function(){
-			/*var mask = this.pars.find('.mask span');
-			mask.removeClass('on');
-			mask.eq(this.curPos).addClass('on');*/
+			var mask = this.pars.querySelectorAll('.mask span');
+			this.removeClass.call(mask, 'on asd');
+			//mask.eq(this.curPos).addClass('on');
+			//this.addClass.call(mask, 'on')
 		},
 
 		fastDrag: function(){
@@ -139,7 +140,7 @@
 		timeout: function(){
 			if (!this.option.auto) return false;
 			var $this = this;
-			//this.t = setTimeout(function(){$this.timoutGO()}, 100);
+			//this.t = setTimeout(function(){$this.timoutGO()}, 1000);
 			$this.timoutGO();
 		},
 
@@ -157,7 +158,7 @@
 			this.maskChange();
 
 			this.anima(this.curDis);
-			this.timeout();
+			//this.timeout();
 		},
 
 		drag: function(){
@@ -231,15 +232,8 @@
 			this.dragnum 	= 0;
 		},
 
-		css: function(attr, value){
-			var asd = this.par.currentStyle.getAttribute('margin-left');
-			//var asd = element.currentStyle ? this.par.ownerDocument.defaultView.getComputedStyle(this.par).getPropertyValue('margin-left');
-			alert(asd);
-		},
-
 		anima: function(position){
-			this.css();
-			var movePos = parseFloat(this.par.css('transform').slice(7).split(', ')[4]);
+			var movePos = parseFloat(this.css.call(this.par, 'transform').slice(7).split(', ')[4]);
 
 			var b = movePos, c = position - movePos, d = this.option.speed, t = 0;
 			this.a2(b,c,d,t);
@@ -249,7 +243,8 @@
 			var $this = this;
 
 			var result = Math.ceil(this.option.Cubic(t,b,c,d));
-			this.par.css('transform', 'translate3d('+result+'px, 0, 0)');
+			//this.par.css('transform', 'translate3d('+result+'px, 0, 0)');
+			this.css.call(this.par, 'transform', 'translate3d('+result+'px, 0, 0)');
 			if(t<d){ t++; this.tt = setTimeout(function(){ $this.a2(b,c,d,t) }, 10); }
 		},
 
@@ -260,6 +255,66 @@
 			j = !1;
 		for ("boolean" == typeof g && (j = g, g = arguments[h] || {}, h++), "object" == typeof g || n.isFunction(g) || (g = {}), h === i && (g = this, h--); i > h; h++) if (null != (a = arguments[h])) for (b in a) c = g[b], d = a[b], g !== d && (j && d && (n.isPlainObject(d) || (e = n.isArray(d))) ? (e ? (e = !1, f = c && n.isArray(c) ? c : []) : f = c && n.isPlainObject(c) ? c : {}, g[b] = n.extend(j, f, d)) : void 0 !== d && (g[b] = d));
 		return g
+		},
+
+		removeClass: function(a){
+			var c, d, f, a = "string" == typeof a && a,
+				j = this.length;
+
+			for (var i = 0, b = (a || "").match(/\S+/g) || []; j > i; i++){
+				if (c = this[i], d = 1 === c.nodeType && (c.className ? (" " + c.className + " ").replace(/[\t\r\n\f]/g, " ") : " ")) {
+				f = 0;
+
+				while(e = b[f++]){
+
+					if (d.indexOf(' '+e+' ') >= 0){
+						d = d.replace(' '+e+' ', '');
+					}
+				}
+
+				c.className = d.replace(/^\s+|\s+$/g, "");
+				}
+			}
+		},
+
+		addClass: function(a){
+			var c, d, f, a = "string" == typeof a && a,
+				j = this.length;
+
+			for (var i = 0, b = (a || "").match(/\S+/g) || []; j > i; i++){
+				c = this[i];
+				d = 1 === c.nodeType;
+
+				if (d){
+					d = c.className ? (" " + c.className + " ").replace(/[\t\r\n\f]/g, " ") : ' ';
+					f = 0;
+					while(e = b[f++]){
+						if (d.indexOf(' '+a+' ') <= 0){
+						d += a+' ';
+
+					}
+				}
+
+					c.className = d.replace(/^\s+|\s+$/g, "");
+				}
+
+				/*f = 0;
+						
+
+				while(e = b[f++]){
+					while(d.indexOf(' '+a+' ') <= 0){
+						//d = d.replace(' '+a+' ', '');
+						d += a+' ';
+					}
+				}
+
+				c.className = d.replace(/^\s+|\s+$/g, "");*/
+				
+			}
+		},
+
+		css: function(attr, value){
+			return !value ? this.currentStyle ? this.currentStyle.getAttribute(attr) : this.ownerDocument.defaultView.getComputedStyle(this).getPropertyValue(attr) : this.style[attr] = value;
 		},
 	}
 

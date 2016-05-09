@@ -13,6 +13,6 @@ require(['alpha', 'jquery'], function(c, $){
 
 	//$('#carousel a').demo();
 	//$('#carousel').css('width');
-	//$('#carousel').append('<div>asdasd12312</div><div>12312</div>');
+	//$('.mask span').removeClass('on asd');
 	//carousel.see();
 });

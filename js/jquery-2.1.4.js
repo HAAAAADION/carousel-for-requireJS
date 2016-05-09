@@ -128,7 +128,7 @@ function(a, b) {
 			return a
 		},
 		trim: function(a) {
-			return null == a ? "" : (a + "").replace(o, "")
+			return null == a ? "" : (a + "").replace(o, "");
 		},
 		makeArray: function(a, b) {
 			var c = b || [];
@@ -1699,7 +1699,6 @@ function(a, b) {
 			return this.domManip(arguments, function(a) {
 				if (1 === this.nodeType || 11 === this.nodeType || 9 === this.nodeType) {
 					var b = ja(this, a);
-					console.log(b);
 					b.appendChild(a)
 				}
 			})
@@ -2362,10 +2361,14 @@ function(a, b) {
 			if (n.isFunction(a)) return this.each(function(b) {
 				n(this).removeClass(a.call(this, b, this.className))
 			});
+
 			if (h) for (b = (a || "").match(E) || []; j > i; i++) if (c = this[i], d = 1 === c.nodeType && (c.className ? (" " + c.className + " ").replace(ab, " ") : "")) {
+
 				f = 0;
 				while (e = b[f++]) while (d.indexOf(" " + e + " ") >= 0) d = d.replace(" " + e + " ", " ");
-				g = a ? n.trim(d) : "", c.className !== g && (c.className = g)
+
+				g = a ? n.trim(d) : "",  c.className !== g && (c.className = g)
+
 			}
 			return this
 		},
