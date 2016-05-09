@@ -11,7 +11,7 @@ require(['alpha', 'jquery'], function(c, $){
 
 	var carousel = new c.carousel(a);
 
-	//$('#carousel a').demo();
+	//$('#carousel a').carousel();
 	//$('#carousel').css('width');
 	//$('.mask span').removeClass('on asd');
 	//carousel.see();

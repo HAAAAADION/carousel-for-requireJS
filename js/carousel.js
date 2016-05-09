@@ -1,7 +1,6 @@
 (function($$){
 	if (typeof define === 'function' && define.amd){
 		define('alpha', ['jquery'], $$);
-		//define([], $$);
 	}else{
 		$$(jQuery);
 	}
@@ -11,12 +10,7 @@
 		this.length = element && typeof element.length === 'undefined' ? 1 : element && element.length ? element.length : 0;
 		if (this.length === 0) return 'nothing';
 
-		this.$this = element;
-
-		this.option = this.init(this.$this, _aoConfig);
-		this.curPos = this.curDis = 0;
-		this.par 	= !element.length ? element.parentNode : element[0].parentNode;
-		this.pars 	= this.par.parentNode;
+		this.option = this.init(element, _aoConfig);
 
 		this.sizeReset();
 
@@ -25,50 +19,44 @@
 		this.drag();
 	}
 
+	var Cubic = function(t, b, c, d){ return c*((t=t/d-1)*t*t + 1) + b;},
+		lastPos = {x: 0, y: 0},
+		pause = "ontouchstart" in window,
+		touchEvent = {eventDown: 'touchstart', eventMove: 'touchmove', eventUp: 'touchend'},
+		mouseEvent = {eventDown: 'mousedown', eventMove: 'mousemove', eventUp: 'mouseup', eventEnter: 'mouseenter', eventLeave: 'mouseleave'},
+		direction = {x1: 0, x2: 0},
+		eventAction = pause ? touchEvent : mouseEvent,
+		E = /\S+/g,
+		o = /^\s+|\s+$/g,
+		ab = /[\t\r\n\f]/g;
+
 	carousel.prototype = {
-		length: 0,
+		length: 0,		
 		init: function(element, _aoConfig){
-			var defaults = {
-				//false则不允许自动切换
-				auto: true,
-				//false则不允许自动拖拉
-				drag: true,
-				//false则不允许生成“点”
-				mask: true,
+			var defaults = {auto: true,drag: true,mask: true,speed: 50};
 
-				//动画速度
-				speed: 50,
-			};
+			_aoConfig 				= _aoConfig || [];
 
-			var global = {
-				lastPos: {x: 0, y: 0},
-				length: this.length,
-				size: !element.length ? element.parentNode.offsetWidth : element[0].parentNode.offsetWidth,
-				Cubic: function(t, b, c, d){
-					 return c*((t=t/d-1)*t*t + 1) + b;
-				},
+			this.$this 				= element;
 
-				pause: "ontouchstart" in window,
-				touchEvent: {eventDown: 'touchstart', eventMove: 'touchmove', eventUp: 'touchend'},
-				mouseEvent: {eventDown: 'mousedown', eventMove: 'mousemove', eventUp: 'mouseup', eventEnter: 'mouseenter', eventLeave: 'mouseleave'},
+			this.curPos 			= this.curDis = 0;
+			this.par 				= !element.length ? element.parentNode : element[0].parentNode;
+			this.pars 				= this.par.parentNode;
 
-				//鼠标移动方向
-				direction: {x1: 0, x2: 0},
-			}
+			_aoConfig['size'] 		= this.par.offsetWidth;
+			_aoConfig['totalSize'] 	= _aoConfig['size'] * this.length;
 
-			global.eventAction = global.pause ? global.touchEvent : global.mouseEvent;
-			global.totalSize = global.size * global.length;
-
-			var option = this.extend({}, defaults, _aoConfig, global);
+			var option = this.extend({}, defaults, _aoConfig);
 
 			return option;
 		},
 
 		sizeReset: function(){
 			var $this = this;
+
 			window.onresize = function(){
-				$this.option.size 		= $this.par.width();
-				$this.option.totalSize 	= $this.option.size * $this.option.length;
+				$this.option.size 		= $this.par.offsetWidth;
+				$this.option.totalSize 	= $this.option.size * $this.length;
 
 				$this.timoutGO(true);
 			}
@@ -76,28 +64,17 @@
 
 		mask: function(){
 			var content = '';
-			/*this.$this.each(function(k, v){
-				content += k == 0 ? '<span class="on"></span>' : '<span></span>';
-			});*/
 
-			for (var i = 0; i < this.$this.length; i++) if (typeof this.$this[i] === 'object') content += i == 0 ? '<span class="on asd"></span>' : '<span class="on"></span>';
+			for (var i = 0; i < this.length; i++) if (typeof this.$this[i] === 'object') content += i == 0 ? '<span class="on"></span>' : '<span></span>';
 
 			this.append('<div class="mask">'+content+'</div>');
-			//this.pars.append('<div class="mask">'+content+'</div>');
 		},
 
 		append: function(content){
-			var b = document;
-			var k = b.createDocumentFragment();
-			var c = b.createElement("div");
-			var f = k.appendChild(c);
+			var b = document, k = b.createDocumentFragment(), c = b.createElement("div"), f = k.appendChild(c), m = 0, l = [], sel = this.pars;
+
 			f.innerHTML = content;
 			var g = f.childNodes;
-
-			var sel = this.pars;
-
-			var m = 0;
-			var l = [];
 
 			this.merge(l, g);
 
@@ -111,17 +88,14 @@
 			var m = 0;
 			while(e = b[m]) a[m] = e, m++;
 
-			/*for (var c = +b.length, d = 0, e = a.length; c > d; d++){
-				a[e++] = b[d];
-			}*/
 			return a
 		},
 
 		maskChange: function(){
 			var mask = this.pars.querySelectorAll('.mask span');
 			this.removeClass.call(mask, 'on asd');
-			//mask.eq(this.curPos).addClass('on');
-			//this.addClass.call(mask, 'on')
+			
+			this.addClass.call([mask[this.curPos]], 'on')
 		},
 
 		fastDrag: function(){
@@ -132,24 +106,21 @@
 		},
 
 		clearTime: function(){
-			clearTimeout(this.t);
-			clearTimeout(this.tt);
-			clearTimeout(this.fdt);
+			clearTimeout(this.t), clearTimeout(this.tt), clearTimeout(this.fdt);
 		},
 
 		timeout: function(){
 			if (!this.option.auto) return false;
 			var $this = this;
-			//this.t = setTimeout(function(){$this.timoutGO()}, 1000);
-			$this.timoutGO();
+			this.t = setTimeout(function(){$this.timoutGO()}, 1000);
 		},
 
 		timoutGO: function(reset){
 			this.clearTime();
 			var size = this.option.size;
-			var maxDis = -(this.$this.length - 1) * size;
+			var maxDis = -(this.length - 1) * size;
 
-			this.curPos = this.curPos + 1 > this.$this.length - 1 && !reset ? -1 : this.curPos;
+			this.curPos = this.curPos + 1 > this.length - 1 && !reset ? -1 : this.curPos;
 
 			this.curPos = reset ? this.curPos : ++this.curPos;
 
@@ -158,7 +129,7 @@
 			this.maskChange();
 
 			this.anima(this.curDis);
-			//this.timeout();
+			this.timeout();
 		},
 
 		drag: function(){
@@ -241,9 +212,8 @@
 
 		a2: function(b,c,d,t){
 			var $this = this;
+			var result = Math.ceil(Cubic(t,b,c,d));
 
-			var result = Math.ceil(this.option.Cubic(t,b,c,d));
-			//this.par.css('transform', 'translate3d('+result+'px, 0, 0)');
 			this.css.call(this.par, 'transform', 'translate3d('+result+'px, 0, 0)');
 			if(t<d){ t++; this.tt = setTimeout(function(){ $this.a2(b,c,d,t) }, 10); }
 		},
@@ -261,19 +231,12 @@
 			var c, d, f, a = "string" == typeof a && a,
 				j = this.length;
 
-			for (var i = 0, b = (a || "").match(/\S+/g) || []; j > i; i++){
-				if (c = this[i], d = 1 === c.nodeType && (c.className ? (" " + c.className + " ").replace(/[\t\r\n\f]/g, " ") : " ")) {
+			for (var i = 0, b = (a || "").match(E) || []; j > i; i++) if (c = this[i], d = 1 === c.nodeType && (c.className ? (" " + c.className + " ").replace(ab, " ") : " ")){
 				f = 0;
 
-				while(e = b[f++]){
+				while(e = b[f++]) d.indexOf(' '+e+' ') >= 0 && (d = d.replace(' '+e+' ', ' '));
 
-					if (d.indexOf(' '+e+' ') >= 0){
-						d = d.replace(' '+e+' ', '');
-					}
-				}
-
-				c.className = d.replace(/^\s+|\s+$/g, "");
-				}
+				c.className = d.replace(o, "");
 			}
 		},
 
@@ -281,36 +244,12 @@
 			var c, d, f, a = "string" == typeof a && a,
 				j = this.length;
 
-			for (var i = 0, b = (a || "").match(/\S+/g) || []; j > i; i++){
-				c = this[i];
-				d = 1 === c.nodeType;
+			for (var i = 0, b = (a || "").match(E) || []; j > i; i++) if (c = this[i], d = 1 === c.nodeType && (c.className ? (" " + c.className + " ").replace(ab, " ") : ' ')){
+				f = 0;
+				while(e = b[f++]) d.indexOf(' '+a+' ') <= 0 && (d += a+' ');
 
-				if (d){
-					d = c.className ? (" " + c.className + " ").replace(/[\t\r\n\f]/g, " ") : ' ';
-					f = 0;
-					while(e = b[f++]){
-						if (d.indexOf(' '+a+' ') <= 0){
-						d += a+' ';
-
-					}
-				}
-
-					c.className = d.replace(/^\s+|\s+$/g, "");
-				}
-
-				/*f = 0;
-						
-
-				while(e = b[f++]){
-					while(d.indexOf(' '+a+' ') <= 0){
-						//d = d.replace(' '+a+' ', '');
-						d += a+' ';
-					}
-				}
-
-				c.className = d.replace(/^\s+|\s+$/g, "");*/
-				
-			}
+				c.className = d.replace(o, "");
+			}				
 		},
 
 		css: function(attr, value){
@@ -320,18 +259,10 @@
 
 
 	$.fn.extend({
-            demo: function(name) {
-                return new carousel(this, name);
-            }
-        });
-
+		carousel: function(name) {
+			return new carousel(this, name);
+		}
+	});
+	
 	return {carousel: carousel};
 });
-
-/*define(['jquery'], function($){
-	$('div').css('background', '#f00');
-});*/
-
-/*(function($) {
-	$('div').css('background', '#f00');
-})(jQuery);*/
